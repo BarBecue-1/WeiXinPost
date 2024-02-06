@@ -60,58 +60,9 @@ def get_Today_Week():
     return str(trueWeek)
 
 
-# 获取本周课程
-def get_Week_Classes(w):
-    if w is not None:
-        week_Class = config.classes.get(w)
-    else:
-        week = get_Today_Week()
-        week_Class = config.classes.get(week)
-    return week_Class
 
 
-# 获取今日课程
-def get_Today_Class():
-    year = localtime().tm_year
-    month = localtime().tm_mon
-    day = localtime().tm_mday
-    today = datetime.date(datetime(year=year, month=month, day=day))
-    todayClasses = get_Week_Classes(None)[today.weekday()]
-    return todayClasses
 
-
-# 获取指定星期几的课程
-def get_Class(day):
-    theClasses = get_Week_Classes(None)[day]
-    return theClasses
-
-
-# # 发送本周所有课程，周一的时候发
-# def send_Week_Classes(to_user, access_token, week):
-#     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
-#     theuser = to_user[0]
-#     data = {
-#         "touser": theuser,
-#         "template_id": config.template_id2,
-#         "url": "http://weixin.qq.com/download",
-#         "topcolor": "#FF0000",
-#         "data": {
-#             "weeks": {
-#                 "value": classInfo,
-#                 "color": "#FF8000"
-#             }
-#         }
-#     }
-#     headers = {
-#         'Content-Type': 'application/json',
-#         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-#                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-#     }
-#     response = post(url, headers=headers, json=data)
-#     print(response.text)
-
-
-# 发送每日信息
 def send_message(to_user, access_token, city_name, weather, max_temperature, min_temperature):
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
     week_list = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
@@ -145,7 +96,7 @@ def send_message(to_user, access_token, city_name, weather, max_temperature, min
         birth_date = year_date
         birth_day = str(birth_date.__sub__(today)).split(" ")[0]
 
-    theClass = get_Today_Class()
+
     theuser = to_user[0]
     data = {
         "touser": theuser,
@@ -184,30 +135,6 @@ def send_message(to_user, access_token, city_name, weather, max_temperature, min
             "birthday": {
                 "value": birth_day,
                 "color": "#FF8000"
-            },
-            "firstClass": {
-                "value": theClass[0],
-                "color": "#FF8000"
-            },
-            "secondClass": {
-                "value": theClass[1],
-                "color": "#FF8000"
-            },
-            "thirdClass": {
-                "value": theClass[2],
-                "color": "#FF8000"
-            },
-            "fourthClass": {
-                "value": theClass[3],
-                "color": "#FF8000"
-            },
-            "fifthClass": {
-                "value": theClass[4],
-                "color": "#FF8000"
-            },
-            "sixthClass": {
-                "value": theClass[5],
-                "color": "#FF8000"
             }
         }
     }
@@ -220,29 +147,7 @@ def send_message(to_user, access_token, city_name, weather, max_temperature, min
     print(response.text)
 
 
-# 发送课程消息
-def send_Class_Message(to_user, access_token, classInfo):
-    url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
-    theuser = to_user[0]
-    data = {
-        "touser": theuser,
-        "template_id": config.template_id2,
-        "url": "http://weixin.qq.com/download",
-        "topcolor": "#FF0000",
-        "data": {
-            "classInfo": {
-                "value": classInfo,
-                "color": "#FF8000"
-            }
-        }
-    }
-    headers = {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-    }
-    response = post(url, headers=headers, json=data)
-    print(response.text)
+
 
 
 # 发送晚安心语及第二天课程
@@ -267,14 +172,8 @@ def send_Good_Night(to_user, access_token):
     month = localtime().tm_mon
     day = localtime().tm_mday
     today = datetime.date(datetime(year=year, month=month, day=day))
-    weekClasses = get_Week_Classes(None)
+
     week = week_list[(today.weekday() + 1) % 7]
-    theClass = []
-    if (today.weekday() + 1) % 7 == 0:
-        weekClasses = get_Week_Classes(get_Today_Week())
-        theClass = weekClasses[0]
-    else:
-        theClass = weekClasses[today.weekday() + 1]
 
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
     theuser = to_user[0]
@@ -291,30 +190,6 @@ def send_Good_Night(to_user, access_token):
             "week": {
                 "value": week,
                 "color": "#00FFFF"
-            },
-            "firstClass": {
-                "value": theClass[0],
-                "color": "#FF8000"
-            },
-            "secondClass": {
-                "value": theClass[1],
-                "color": "#FF8000"
-            },
-            "thirdClass": {
-                "value": theClass[2],
-                "color": "#FF8000"
-            },
-            "fourthClass": {
-                "value": theClass[3],
-                "color": "#FF8000"
-            },
-            "fifthClass": {
-                "value": theClass[4],
-                "color": "#FF8000"
-            },
-            "sixthClass": {
-                "value": theClass[5],
-                "color": "#FF8000"
             }
         }
     }
@@ -351,7 +226,6 @@ if __name__ == '__main__':
         send_message(user, accessToken, city, weather, max_temperature, min_temperature)
         isPost = True
     # 课程提醒推送
-    todayClasses = get_Today_Class()
     time_table = config.time_table
     for i in range(len(time_table)):
         if isPost:
@@ -361,11 +235,6 @@ if __name__ == '__main__':
             nowTime = datetime.now().strftime('%H:%M:%S')
             print("当前时间:", nowTime)
             if reminderTime == nowTime:
-                if len(todayClasses[i]) != 0:
-                    classInfo = "课程信息: " + todayClasses[i] + "\n" + "上课时间: " + config.course_Time[i] + "\n"
-                    print(classInfo)
-                    send_Class_Message(user, accessToken, classInfo)
-                    print("课程信息推送成功！")
                 isPost = True
                 break
             elif reminderTime < nowTime:
